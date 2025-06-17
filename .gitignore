@@ -1,2 +1,4 @@
 .Notebooks/config.py
 .pyc
+__pycache__/
+*.pyc
