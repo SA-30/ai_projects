@@ -59,6 +59,18 @@ export default function WordRevealGame() {
     }
   };
 
+  
+  const handleReveal = () => {
+    if (!gameData) return;
+    
+    const nextIndex = revealed.findIndex(r => r === false);
+    if (nextIndex !== -1) {
+      const newRevealed = [...revealed];
+      newRevealed[nextIndex] = true;
+      setRevealed(newRevealed);
+    }
+  };
+  
   const allRevealed = revealed.every(r => r);
 
   useEffect(() => {
@@ -110,14 +122,26 @@ export default function WordRevealGame() {
           Guess
         </button>
       </div>
+      <p className='text-black/50 text-center mt-10'>If you are having trouble!!! You can alwasy change words or reveal them.</p>
+
+       <div className='flex w-[600px] gap-5 mt-10'>
+        {/* Reveal button */}
+        <button
+          onClick={handleReveal}
+          disabled={allRevealed}
+          className="flex mb-4 justify-center text-sm items-center font-black cursor-pointer py-2 px-10 disabled:bg-yellow-300 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+        >
+          Reveal
+        </button>
 
       <button
         onClick={fetchNewWords}
         disabled={loading ? true : false}
-        className="flex mb-4 w-[600px] justify-center items-center font-black cursor-pointer py-4  px-10 disabled:bg-purple-300 bg-purple-500 text-white rounded hover:bg-purple-600"
+        className="flex mb-4 w-full justify-center text-sm items-center font-black cursor-pointer py-2  px-10 disabled:bg-purple-300 bg-purple-500 text-white rounded hover:bg-purple-600"
       >
         New Words
       </button>
+       </div>
       </div>
     </div>
   );
