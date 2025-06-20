@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 type GameData = {
   target: string;
   words: string[];
-  hint: string;
 };
 
 export default function WordRevealGame() {
@@ -14,18 +13,28 @@ export default function WordRevealGame() {
   const [score, setScore] = useState(0);
   const [guess, setGuess] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Initialize game
+  const url = process.env.backend_url || "https://ai-projects-i11h.onrender.com/";
+
   const fetchGameData = async () => {
-    const res = await fetch('/api/generate-game');
+    const res = await fetch(`${url}generate-game`);
     const data = await res.json();
-    setGameData(data);
-    setRevealed(new Array(data.words.length).fill(false));
+
+    const filteredWords = data.words.filter((word: string) => word.toLowerCase() !== data.target.toLowerCase());
+
+    setGameData({ target: data.target, words: filteredWords });
+    setRevealed(new Array(filteredWords.length).fill(false));
     setGuess('');
     setMessage('');
+    setLoading(false)
   };
 
-  // Handle guess submission
+  const fetchNewWords = async () => {
+    setLoading(true)
+    await fetchGameData();
+  };
+
   const handleGuess = () => {
     if (!gameData || !guess.trim()) return;
 
@@ -36,9 +45,7 @@ export default function WordRevealGame() {
       if (word.toLowerCase() === guess.toLowerCase() && !newRevealed[index]) {
         newRevealed[index] = true;
         foundAny = true;
-        if (word === gameData.target) {
-          setScore(score + 1);
-        }
+        setScore(score + 1);
       }
     });
 
@@ -46,13 +53,12 @@ export default function WordRevealGame() {
     setGuess('');
 
     if (foundAny) {
-      setMessage('Found matching words!');
+      setMessage('Correct! You found a synonym!');
     } else {
-      setMessage('No matches found. Try again!');
+      setMessage('No match. Try again!');
     }
   };
 
-  // Check if all words are revealed
   const allRevealed = revealed.every(r => r);
 
   useEffect(() => {
@@ -62,25 +68,24 @@ export default function WordRevealGame() {
   if (!gameData) return <div className="text-center p-8">Loading...</div>;
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-4">Word Reveal Game</h1>
-      
-      <div className="mb-6 text-center">
-        <p className="text-lg font-semibold">Hint: {gameData.hint}</p>
+    <div className="flex flex-col items-center  justify-center p-4 pt-10 ">
+      <h1 className="text-6xl font-bold text-center mb-8">Synonym Guess Game</h1>
+
+      <div className=''>
+        <div className="mb-6 text-center ">
+        <p className="text-lg font-semibold">Your word: <span className="text-rose-500">{gameData.target}</span></p>
         <p className="text-gray-600">Score: {score}</p>
         {message && <p className={`mt-2 ${message.includes('No') ? 'text-red-500' : 'text-green-500'}`}>{message}</p>}
       </div>
 
-      {/* Word slots */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      {/* Synonym slots */}
+      <div className="grid grid-cols-1 gap-3 mb-6 w-[600px]">
         {gameData.words.map((word, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`p-3 rounded border-2 text-center ${
-              revealed[index] 
-                ? word === gameData.target 
-                  ? 'bg-green-100 border-green-500' 
-                  : 'bg-blue-100 border-blue-300'
+              revealed[index]
+                ? 'bg-blue-100 border-blue-300'
                 : 'bg-gray-100 border-gray-300'
             }`}
           >
@@ -90,31 +95,30 @@ export default function WordRevealGame() {
       </div>
 
       {/* Guess input */}
-      <div className="flex mb-4">
+      <div className="flex mb-4 w-[600px] space-x-4">
         <input
           type="text"
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
           className="flex-1 p-2 border rounded-l"
-          placeholder="Type your guess..."
+          placeholder="Type a synonym..."
         />
-        <button 
+        <button
           onClick={handleGuess}
-          className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
+          className="bg-rose-500 text-white px-4 py-2 rounded-r hover:bg-rose-600 cursor-pointer"
         >
           Guess
         </button>
       </div>
 
-      {/* Next round button (only shows when all revealed) */}
-      {allRevealed && (
-        <button
-          onClick={fetchGameData}
-          className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
-        >
-          Next Round
-        </button>
-      )}
+      <button
+        onClick={fetchNewWords}
+        disabled={loading ? true : false}
+        className="flex mb-4 w-[600px] justify-center items-center font-black cursor-pointer py-4  px-10 disabled:bg-purple-300 bg-purple-500 text-white rounded hover:bg-purple-600"
+      >
+        New Words
+      </button>
+      </div>
     </div>
   );
 }
