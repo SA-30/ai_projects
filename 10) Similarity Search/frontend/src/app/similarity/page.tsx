@@ -95,7 +95,6 @@ export default function WordRevealGame() {
           type="text"
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
           className="flex-1 p-2 border rounded-l"
           placeholder="Type your guess..."
         />
