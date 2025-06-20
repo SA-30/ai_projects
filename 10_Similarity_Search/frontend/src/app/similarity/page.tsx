@@ -91,7 +91,7 @@ export default function WordRevealGame() {
       </div>
 
       {/* Synonym slots */}
-      <div className="grid grid-cols-1 gap-3 mb-6 w-[600px]">
+      <div className="grid grid-cols-1 gap-3 mb-6 max-w-[600px]">
         {gameData.words.map((word, index) => (
           <div
             key={index}
@@ -107,7 +107,7 @@ export default function WordRevealGame() {
       </div>
 
       {/* Guess input */}
-      <div className="flex mb-4 w-[600px] space-x-4">
+      <div className="flex mb-4 md:max-w-[600px] space-x-4">
         <input
           type="text"
           value={guess}
@@ -124,7 +124,7 @@ export default function WordRevealGame() {
       </div>
       <p className='text-black/50 text-center mt-10'>If you are having trouble!!! You can alwasy change words or reveal them.</p>
 
-       <div className='flex w-[600px] gap-5 mt-10'>
+       <div className='flex max-w-[600px] gap-5 mt-10'>
         {/* Reveal button */}
         <button
           onClick={handleReveal}
