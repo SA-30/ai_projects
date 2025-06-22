@@ -15,8 +15,8 @@ export default function WordRevealGame() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const url = process.env.backend_url || "http://localhost:8000/";
-  // const url = process.env.backend_url || "https://ai-projects-i11h.onrender.com/";
+  // const url = process.env.backend_url || "http://localhost:8000/";
+  const url = process.env.backend_url || "https://ai-projects-i11h.onrender.com/";
 
   const fetchGameData = async () => {
     // const res = await fetch(`${url}generate-game`);
