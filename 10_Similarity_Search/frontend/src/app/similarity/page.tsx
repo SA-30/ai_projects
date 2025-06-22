@@ -19,10 +19,15 @@ export default function WordRevealGame() {
   const url = process.env.backend_url || "https://ai-projects-i11h.onrender.com/";
 
   const fetchGameData = async () => {
+    try{
     // const res = await fetch(`${url}generate-game`);
     const res = await fetch(`${url}generate-gre-game`);
     
     const data = await res.json();
+
+    if (!data || !data.words || !Array.isArray(data.words) || !data.target) {
+      throw new Error('Invalid game data structure');
+    }
 
     const filteredWords = data.words.filter((word: string) => word.toLowerCase() !== data.target.toLowerCase());
 
@@ -30,7 +35,13 @@ export default function WordRevealGame() {
     setRevealed(new Array(filteredWords.length).fill(false));
     setGuess('');
     setMessage('');
-    setLoading(false)
+    } catch (error){
+      console.error('Error fetching game data:', error);
+      setMessage('Failed to load game. Please try again.');
+      setGameData(null);
+    } finally {
+      setLoading(false)
+    }
   };
 
   const fetchNewWords = async () => {
@@ -81,6 +92,18 @@ export default function WordRevealGame() {
   }, []);
 
   if (!gameData) return <div className="text-center p-8">Loading...</div>;
+
+  if (!gameData && !loading) return (
+  <div className="text-center p-8">
+    <p>Failed to load game data.</p>
+    <button
+      onClick={fetchNewWords}
+      className="mt-4 bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-600"
+    >
+      Try Again
+    </button>
+  </div>
+);
 
   return (
     <div className="flex flex-col items-center  justify-center p-4 pt-10 ">
