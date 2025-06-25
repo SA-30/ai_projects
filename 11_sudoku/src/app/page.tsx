@@ -11,6 +11,7 @@ export default function Home() {
   const [userInput, setUserInput] = useState<SudokuGrid>([]);
   const [difficulty, setDifficulty] = useState<string>('easy');
   const [time, setTime] = useState<number>(0);
+  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
   // const [isSolving, setIsSolving] = useState(false);
 
   // Timer
@@ -62,6 +63,24 @@ export default function Home() {
     }
     setUserInput(newInput);
   };
+
+  // Update selection
+    const handleCellClick = (row: number, col: number) => {
+      if (board[row][col] === 0) {
+        setSelectedCell([row, col]);
+      } else {
+        setSelectedCell(null); // Don't allow selection of prefilled cells
+      }
+    };
+
+    const handleNumberClick = (num: number) => {
+      if (selectedCell) {
+        const [row, col] = selectedCell;
+        const newInput = [...userInput.map(r => [...r])];
+        newInput[row][col] = num;
+        setUserInput(newInput);
+      }
+    };
 
   // Solve instantly
   const solveBoard = () => {
@@ -136,22 +155,47 @@ export default function Home() {
             `;
 
             return (
+              // <input
+              //   key={`${i}-${j}`}
+              //   className={`w-10 h-10 text-center text-lg ${borderClasses} border-gray-600/40 
+              //     ${isPrefilled ? 'bg-gray-200 font-bold' : 'bg-white'} focus:outline-none`}
+              //   value={cell === 0 ? '' : cell}
+              //   disabled={isPrefilled }
+              //   onChange={(e) => handleChange(i, j, e.target.value)}
+              //   maxLength={1}
+              // />
               <input
                 key={`${i}-${j}`}
                 className={`w-10 h-10 text-center text-lg ${borderClasses} border-gray-600/40 
-                  ${isPrefilled ? 'bg-gray-200 font-bold' : 'bg-white'} focus:outline-none`}
+                  ${isPrefilled ? 'bg-gray-200 font-bold' : 'bg-white'} 
+                  ${selectedCell?.[0] === i && selectedCell?.[1] === j ? '' : ''}
+                  `}
                 value={cell === 0 ? '' : cell}
-                disabled={isPrefilled }
+                disabled={isPrefilled}
+                onClick={() => handleCellClick(i, j)}
                 onChange={(e) => handleChange(i, j, e.target.value)}
                 maxLength={1}
               />
+
             );
           })
         )}
       </div>
 
+      <div className="grid grid-cols-9 gap-1 mt-4">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          <button
+            key={num}
+            onClick={() => handleNumberClick(num)}
+            className="bg-white text-black border border-gray-400 rounded w-10 h-10 hover:bg-blue-300"
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+
       {/* Controls */}
-      <div className="mt-6 text-sm flex flex-wrap gap-4">
+      <div className="mt-6 text-xs flex flex-wrap gap-4">
         <button
           onClick={fetchBoard}
           className="px-4 py-2 text-black border-2 border-black rounded hover:bg-blue-600"
@@ -170,6 +214,7 @@ export default function Home() {
         >
           Solve Instantly
         </button>
+        
         {/* <button
           onClick={stepSolve}
           disabled={isSolving}
@@ -178,6 +223,12 @@ export default function Home() {
           Step-by-Step Solve
         </button> */}
       </div>
+      <button
+          onClick={() => handleNumberClick(0)}
+          className="mt-5 w-full px-4 py-2 text-black rounded hover:bg-red-600"
+        >
+          Clear Cell
+        </button>
     </div>
   );
 }
