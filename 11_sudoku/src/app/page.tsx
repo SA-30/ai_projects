@@ -116,8 +116,8 @@ export default function Home() {
   // };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
-      <h2 className="text-4xl font-bold mb-2">Sudoku</h2>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-slate-200">
+      <h2 className="text-6xl font-bold mb-2">Sudoku</h2>
       <div className="mb-2">
         Difficulty: {difficulty}
       </div>
@@ -138,7 +138,7 @@ export default function Home() {
             return (
               <input
                 key={`${i}-${j}`}
-                className={`w-10 h-10 text-center text-lg ${borderClasses} border-gray-400 
+                className={`w-10 h-10 text-center text-lg ${borderClasses} border-gray-600/40 
                   ${isPrefilled ? 'bg-gray-200 font-bold' : 'bg-white'} focus:outline-none`}
                 value={cell === 0 ? '' : cell}
                 disabled={isPrefilled }
@@ -151,22 +151,22 @@ export default function Home() {
       </div>
 
       {/* Controls */}
-      <div className="mt-6 flex flex-wrap gap-4">
+      <div className="mt-6 text-sm flex flex-wrap gap-4">
         <button
           onClick={fetchBoard}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 text-black border-2 border-black rounded hover:bg-blue-600"
         >
           Next Game
         </button>
         <button
           onClick={checkAnswer}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          className="px-4 py-2 text-black border-2 border-black rounded hover:bg-green-600"
         >
           Check Answer
         </button>
         <button
           onClick={solveBoard}
-          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
+          className="px-4 py-2 text-black border-2 border-black rounded hover:bg-purple-600 disabled:opacity-50"
         >
           Solve Instantly
         </button>
