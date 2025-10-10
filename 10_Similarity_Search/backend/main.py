@@ -17,7 +17,7 @@ qdrant_url = os.getenv("qdrant_url")
 # CORS setup (allow Vercel frontend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://ai-projects-similarity-search.vercel.app"],
     allow_methods=["*"],
 )
 
